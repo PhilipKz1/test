@@ -7,12 +7,11 @@ import bodyParser from 'body-parser';
 import { config } from "dotenv";
 config();
 
-import { Configuration, OpenAIApi } from "openai";
-import readline from "readline";
+import OpenAI from "openai";
 console.log(process.env.API_KEY);
-const openai = new OpenAIApi(new Configuration({
-  apiKey: process.env.API_KEY,
-}));
+const openai = new OpenAI({
+  apiKey: process.env.API_KEY
+});
 
 
 // OpenAI related imports and configuration here...
@@ -43,13 +42,13 @@ app.post('/summarize', async (req, res) => {
   }, msg];
 
   try {
-    const resOpenAI = await openai.createChatCompletion({
+    const resOpenAI = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: messages,
     });
 
-    if (resOpenAI.data.choices && resOpenAI.data.choices.length > 0) {
-      let aiResponse = resOpenAI.data.choices[0].message.content;
+    if (resOpenAI.choices && resOpenAI.choices.length > 0) {
+      let aiResponse = resOpenAI.choices[0].message.content;
       aiResponse += "\n\nThis is a recommendation, so feel free to adjust it to meet your product and creativity.";
       res.json({ summary: aiResponse });
     } else {
